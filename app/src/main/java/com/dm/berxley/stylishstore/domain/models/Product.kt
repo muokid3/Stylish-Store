@@ -10,7 +10,7 @@ data class Product(
     val description: String,
     val price: Int,
     val images: List<String>,
-    val category: Category,
+    val categoryId: Int,
     val creationAt: String,
     val updatedAt: String
 )
