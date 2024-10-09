@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.dm.berxley.stylishstore.presentation.onboarding.IntroScreen
 import com.dm.berxley.stylishstore.ui.theme.StylishStoreTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -64,9 +65,9 @@ class MainActivity : ComponentActivity() {
                                 startDestination = Screen.AppIntroScreen.route
                             ) {
                                 composable(route=Screen.AppIntroScreen.route){
-
+                                    IntroScreen(navController = navController)
                                 }
-                                composable(route=Screen.LoginScreenScreen.route){
+                                composable(route=Screen.LoginScreen.route){
 
                                 }
                                 composable(route=Screen.RegisterScreen.route){
