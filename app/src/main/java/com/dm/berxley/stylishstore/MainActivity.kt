@@ -20,6 +20,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.dm.berxley.stylishstore.presentation.onboarding.intro.IntroScreen
 import com.dm.berxley.stylishstore.presentation.onboarding.login.LoginScreen
+import com.dm.berxley.stylishstore.presentation.onboarding.register.RegisterScreen
 import com.dm.berxley.stylishstore.ui.theme.StylishStoreTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -72,7 +73,7 @@ class MainActivity : ComponentActivity() {
                                     LoginScreen(navController = navController)
                                 }
                                 composable(route=Screen.RegisterScreen.route){
-
+                                    RegisterScreen(navController = navController)
                                 }
 
                             }

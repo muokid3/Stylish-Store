@@ -1,4 +1,4 @@
-package com.dm.berxley.stylishstore.presentation.onboarding.login
+package com.dm.berxley.stylishstore.presentation.onboarding.register
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -55,7 +56,8 @@ import com.dm.berxley.stylishstore.Screen
 import com.dm.berxley.stylishstore.ui.theme.Primary40
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun RegisterScreen(navController: NavController) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -64,23 +66,46 @@ fun LoginScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        var name by remember { mutableStateOf("") }
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
+        var confirmPassword by remember { mutableStateOf("") }
         var showPassword by remember { mutableStateOf(false) }
+        var showConfirmPassword by remember { mutableStateOf(false) }
 
         Spacer(modifier = Modifier.height(36.dp))
         Text(
-            text = "Welcome Back!",
+            modifier = Modifier.fillMaxWidth(),
+            text = "Create an Account.",
             style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Start
         )
 
         Text(
-            text = "Please log in to continue...",
+            modifier = Modifier.fillMaxWidth(),
+            text = "Let's get you started in two simple steps...",
             style = MaterialTheme.typography.headlineSmall,
+            textAlign = TextAlign.Start
         )
 
         Spacer(modifier = Modifier.height(48.dp))
+
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = name,
+            onValueChange = {
+                name = it
+            }, leadingIcon = {
+                Icon(imageVector = Icons.Filled.Person, contentDescription = "name")
+            },
+            label = {
+                Text(text = "Full Name")
+            },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            )
+        )
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -91,7 +116,7 @@ fun LoginScreen(navController: NavController) {
                 Icon(imageVector = Icons.Filled.Email, contentDescription = "email")
             },
             label = {
-                Text(text = "Username or E-mail")
+                Text(text = "E-mail")
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
@@ -129,6 +154,40 @@ fun LoginScreen(navController: NavController) {
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Next
+            )
+        )
+
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = confirmPassword,
+            onValueChange = {
+                confirmPassword = it
+            }, leadingIcon = {
+                Icon(imageVector = Icons.Filled.Password, contentDescription = "email")
+            },
+            trailingIcon = {
+                if (showPassword) {
+                    IconButton(onClick = { showConfirmPassword = false }) {
+                        Icon(imageVector = Icons.Filled.VisibilityOff, contentDescription = "Show")
+                    }
+
+                } else {
+                    IconButton(onClick = { showConfirmPassword = true }) {
+                        Icon(imageVector = Icons.Filled.Visibility, contentDescription = "Show")
+                    }
+                }
+            },
+            label = {
+                Text(text = "Confirm Password")
+            },
+            visualTransformation = if (showConfirmPassword) {
+                VisualTransformation.None
+            } else {
+                PasswordVisualTransformation()
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             )
         )
@@ -139,9 +198,8 @@ fun LoginScreen(navController: NavController) {
         TextButton(onClick = { /*TODO*/ }) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "Forgot Password?",
-                color = Primary40,
-                textAlign = TextAlign.End
+                text = "By clicking Register button, you agree with our terms and conditions",
+                textAlign = TextAlign.Start
             )
         }
 
@@ -155,7 +213,7 @@ fun LoginScreen(navController: NavController) {
                 contentColor = Color.White
             )
         ) {
-            Text(text = "Login")
+            Text(text = "Create Account")
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -239,10 +297,10 @@ fun LoginScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        TextButton(onClick = { navController.navigate(Screen.RegisterScreen.route) }) {
+        TextButton(onClick = { navController.navigate(Screen.LoginScreen.route) }) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "Don't have an account? Sign Up",
+                text = "Already have an account? Log In",
                 textAlign = TextAlign.Center,
                 fontSize = 18.sp
             )
@@ -254,6 +312,6 @@ fun LoginScreen(navController: NavController) {
 
 @Preview(showBackground = true)
 @Composable
-fun PrevLogin() {
-    LoginScreen(navController = rememberNavController())
+fun RegisterScreenPrev() {
+    RegisterScreen(navController = rememberNavController())
 }
