@@ -36,7 +36,7 @@ class MainViewModel @Inject constructor(localUserManager: LocalUserManager) : Vi
                     startDestination = Screen.OnboardingNavigator.route
                 }
 
-                delay(3000)
+                delay(2000)
                 splashCondition = false
             }
         }

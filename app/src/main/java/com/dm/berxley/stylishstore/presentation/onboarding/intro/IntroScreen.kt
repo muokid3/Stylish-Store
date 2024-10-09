@@ -1,4 +1,4 @@
-package com.dm.berxley.stylishstore.presentation.onboarding
+package com.dm.berxley.stylishstore.presentation.onboarding.intro
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -30,6 +32,7 @@ import com.dm.berxley.stylishstore.Screen
 import com.dm.berxley.stylishstore.presentation.onboarding.components.OffersIndicator
 import com.dm.berxley.stylishstore.presentation.onboarding.components.OnboardingPage
 import com.dm.berxley.stylishstore.presentation.onboarding.components.pages
+import com.dm.berxley.stylishstore.ui.theme.Primary40
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -76,7 +79,7 @@ fun IntroScreen(navController: NavController) {
         ) {
 
             Text(text = "${pagerState.currentPage + 1}/${pagerState.pageCount}")
-            TextButton(onClick = {
+            OutlinedButton(onClick = {
                 //skip and go to login
                 navController.navigate(Screen.LoginScreen.route)
             }) {
@@ -116,17 +119,21 @@ fun IntroScreen(navController: NavController) {
                 selectedPage = pagerState.currentPage
             )
 
-            Button(onClick = {
-                scope.launch {
-                    if (pagerState.currentPage == pagerState.pageCount - 1) {
-                        //go to login
-                        navController.navigate(Screen.LoginScreen.route)
-                    } else {
-                        //go to next pager
-                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+            Button(
+                onClick = {
+                    scope.launch {
+                        if (pagerState.currentPage == pagerState.pageCount - 1) {
+                            //go to login
+                            navController.navigate(Screen.LoginScreen.route)
+                        } else {
+                            //go to next pager
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        }
                     }
-                }
-            }) {
+                }, colors = ButtonDefaults.buttonColors(
+                    containerColor = Primary40
+                )
+            ) {
                 Text(
                     text = buttonState.value[1],
                     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
