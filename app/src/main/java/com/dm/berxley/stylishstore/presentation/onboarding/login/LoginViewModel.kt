@@ -1,5 +1,6 @@
 package com.dm.berxley.stylishstore.presentation.onboarding.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dm.berxley.stylishstore.domain.repositories.AuthRepository
@@ -10,6 +11,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.json.JSONException
+import org.json.JSONObject
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,7 +37,9 @@ class LoginViewModel @Inject constructor(
                 val responseCode = loginResponse.code()
                 if (loginResponse.isSuccessful) {
                     val token = loginResponse.body()?.access_token ?: ""
-                    //val refreshToken = loginResponse.body()?.refresh_token
+                    //val refreshToken = loginResponse.body()?.refresh_token ?: ""
+                    Log.d("Token:", token)
+
 
                     localUserManager.saveAccessToken(token)
                     _loginState.update {
@@ -43,8 +48,13 @@ class LoginViewModel @Inject constructor(
 
 
                 } else {
-                    val httpErrorMessage = loginResponse.message()
-                    val errorMessage = "Error $responseCode: $httpErrorMessage"
+                    val errorBody = loginResponse.errorBody().toString()
+                    val message = try {
+                        JSONObject(errorBody).get("message")
+                    } catch (e: JSONException) {
+                        "Unknown API Error"
+                    }
+                    val errorMessage = "Error $responseCode: $message"
 
                     _loginState.update {
                         it.copy(
