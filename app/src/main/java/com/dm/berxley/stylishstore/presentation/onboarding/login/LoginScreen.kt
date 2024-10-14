@@ -22,8 +22,10 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +33,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +51,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.dm.berxley.stylishstore.R
@@ -56,6 +60,25 @@ import com.dm.berxley.stylishstore.ui.theme.Primary40
 
 @Composable
 fun LoginScreen(navController: NavController) {
+
+    val viewModel = hiltViewModel<LoginViewModel>()
+    val loginState = viewModel.loginState.collectAsState().value
+
+    if (loginState.loginSuccessful) {
+        navController.navigate(Screen.MainNavigator.route)
+    }
+
+    if (loginState.errorMessage.isNotEmpty()) {
+        //show error alertdialog
+        AlertDialog(onDismissRequest = { viewModel.reset() }, confirmButton = {
+            Button(onClick = { viewModel.reset() }) {
+                Text(text = "Ok")
+            }
+        }, title = { Text(text = "An error Occurred") }, text = {
+            Text(text = loginState.errorMessage)
+        })
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -147,9 +170,15 @@ fun LoginScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        if (loginState.isLoading) {
+            CircularProgressIndicator()
+        }
+
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = { /*TODO*/ },
+            onClick = {
+                viewModel.login(email, password)
+            },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Primary40,
                 contentColor = Color.White

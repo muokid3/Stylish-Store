@@ -1,13 +1,10 @@
-package com.dm.berxley.stylishstore.domain.models
+package com.dm.berxley.stylishstore.data.remote.dtos
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-data class User(
-    val id: Int,
+data class RegisterDto(
     val avatar: String,
     val creationAt: String,
     val email: String,
+    val id: Int,
     val name: String,
     val password: String,
     val role: String,

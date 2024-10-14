@@ -7,7 +7,7 @@ import com.dm.berxley.stylishstore.domain.models.Category
 import com.dm.berxley.stylishstore.domain.models.Product
 import com.dm.berxley.stylishstore.domain.models.User
 
-@Database(entities = [User::class, Product::class, Category::class], version = 1,)
+@Database(entities = [Product::class, Category::class], version = 2,)
 @TypeConverters(ImageListConverter::class)
 abstract class AppDatabase: RoomDatabase() {
     abstract val appDao: AppDao

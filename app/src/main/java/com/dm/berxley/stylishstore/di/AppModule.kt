@@ -5,7 +5,9 @@ import androidx.room.Room
 import com.dm.berxley.stylishstore.data.local.AppDatabase
 import com.dm.berxley.stylishstore.data.local.ImageListConverter
 import com.dm.berxley.stylishstore.data.remote.AppApi
+import com.dm.berxley.stylishstore.data.repositories.AuthRepositoryImpl
 import com.dm.berxley.stylishstore.data.sharedprefs.LocalUserManagerImpl
+import com.dm.berxley.stylishstore.domain.repositories.AuthRepository
 import com.dm.berxley.stylishstore.domain.sharedprefs.LocalUserManager
 import dagger.Module
 import dagger.Provides
@@ -56,4 +58,8 @@ object AppModule {
             .fallbackToDestructiveMigration()
             .build()
     }
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(appApi: AppApi): AuthRepository = AuthRepositoryImpl(appApi)
 }
