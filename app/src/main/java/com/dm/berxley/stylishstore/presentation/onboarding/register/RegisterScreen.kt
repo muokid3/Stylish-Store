@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -23,8 +24,10 @@ import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +35,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,14 +53,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.dm.berxley.stylishstore.R
 import com.dm.berxley.stylishstore.Screen
 import com.dm.berxley.stylishstore.ui.theme.Primary40
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(navController: NavController) {
+    val viewModel = hiltViewModel<RegisterViewModel>()
+    val registerState = viewModel.registerState.collectAsState().value
 
     Column(
         modifier = Modifier
@@ -72,6 +81,32 @@ fun RegisterScreen(navController: NavController) {
         var confirmPassword by remember { mutableStateOf("") }
         var showPassword by remember { mutableStateOf(false) }
         var showConfirmPassword by remember { mutableStateOf(false) }
+
+
+        if (registerState.registerSuccessful) {
+            AlertDialog(onDismissRequest = {
+                navController.navigate(Screen.LoginScreen.route)
+            }, confirmButton = {
+                Button(onClick = {
+                    navController.navigate(Screen.LoginScreen.route)
+                }) {
+                    Text(text = "Sure!")
+                }
+            }, title = { Text(text = "Registration Successful!") }, text = {
+                Text(text = "Your account has been created successfully. Please Log in to continue")
+            })
+        }
+
+        if (registerState.errorMessage.isNotEmpty()) {
+            //show error alertdialog
+            AlertDialog(onDismissRequest = { }, confirmButton = {
+                Button(onClick = { }) {
+                    Text(text = "Ok")
+                }
+            }, title = { Text(text = "An error Occurred") }, text = {
+                Text(text = registerState.errorMessage)
+            })
+        }
 
         Spacer(modifier = Modifier.height(36.dp))
         Text(
@@ -102,10 +137,19 @@ fun RegisterScreen(navController: NavController) {
             label = {
                 Text(text = "Full Name")
             },
+            isError = registerState.nameError.isNotEmpty(),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
             )
         )
+        if (registerState.nameError.isNotEmpty()) {
+            Text(
+                text = registerState.nameError,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -118,11 +162,20 @@ fun RegisterScreen(navController: NavController) {
             label = {
                 Text(text = "E-mail")
             },
+            isError = registerState.emailError.isNotEmpty(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
             )
         )
+
+        if (registerState.emailError.isNotEmpty()) {
+            Text(
+                text = registerState.emailError,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -132,6 +185,7 @@ fun RegisterScreen(navController: NavController) {
             }, leadingIcon = {
                 Icon(imageVector = Icons.Filled.Password, contentDescription = "email")
             },
+            isError = registerState.passwordError.isNotEmpty(),
             trailingIcon = {
                 if (showPassword) {
                     IconButton(onClick = { showPassword = false }) {
@@ -157,6 +211,14 @@ fun RegisterScreen(navController: NavController) {
                 imeAction = ImeAction.Next
             )
         )
+
+        if (registerState.passwordError.isNotEmpty()) {
+            Text(
+                text = registerState.passwordError,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -186,11 +248,20 @@ fun RegisterScreen(navController: NavController) {
             } else {
                 PasswordVisualTransformation()
             },
+            isError = registerState.confirmPasswordError.isNotEmpty(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             )
         )
+
+        if (registerState.confirmPasswordError.isNotEmpty()) {
+            Text(
+                text = registerState.confirmPasswordError,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -205,9 +276,22 @@ fun RegisterScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        if (registerState.isLoading) {
+            CircularProgressIndicator(modifier = Modifier.width(20.dp))
+        }
+
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = { /*TODO*/ },
+            onClick = {
+                viewModel.viewModelScope.launch {
+                    viewModel.register(
+                        name = name.trim(),
+                        email = email.trim(),
+                        password = password.trim(),
+                        confirmPassword = confirmPassword.trim()
+                    )
+                }
+            },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Primary40,
                 contentColor = Color.White

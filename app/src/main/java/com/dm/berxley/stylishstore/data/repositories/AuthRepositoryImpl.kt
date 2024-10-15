@@ -21,10 +21,8 @@ class AuthRepositoryImpl @Inject constructor(
         name: String,
         email: String,
         password: String,
-        avatar: String
     ): Response<RegisterDto> {
-        val registerPayload =
-            RegisterPayload(name = name, email = email, password = password, avatar = avatar)
+        val registerPayload = RegisterPayload(name = name, email = email, password = password)
         return appApi.register(registerPayload)
     }
 }
