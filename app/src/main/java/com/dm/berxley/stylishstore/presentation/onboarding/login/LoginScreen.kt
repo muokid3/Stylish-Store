@@ -53,11 +53,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.dm.berxley.stylishstore.R
 import com.dm.berxley.stylishstore.Screen
 import com.dm.berxley.stylishstore.ui.theme.Primary40
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(navController: NavController) {
@@ -175,10 +177,13 @@ fun LoginScreen(navController: NavController) {
             CircularProgressIndicator(modifier = Modifier.width(20.dp))
         }
 
+
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                viewModel.login(email, password)
+                viewModel.viewModelScope.launch {
+                    viewModel.login(email, password)
+                }
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Primary40,
